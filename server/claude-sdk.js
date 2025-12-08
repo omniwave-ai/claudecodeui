@@ -36,8 +36,16 @@ function mapCliOptionsToSDK(options = {}) {
   }
 
   // Map permission mode
-  if (permissionMode && permissionMode !== 'default') {
-    sdkOptions.permissionMode = permissionMode;
+  // Note: 'default' mode requires a canUseTool callback to handle permission prompts.
+  // Since interactive permission prompts aren't implemented in the UI yet,
+  // we map 'default' to 'acceptEdits' to allow file operations without blocking.
+  if (permissionMode === 'bypassPermissions') {
+    sdkOptions.permissionMode = 'bypassPermissions';
+  } else if (permissionMode === 'plan') {
+    sdkOptions.permissionMode = 'plan';
+  } else {
+    // 'default' and 'acceptEdits' both use acceptEdits to avoid blocking
+    sdkOptions.permissionMode = 'acceptEdits';
   }
 
   // Map tool settings
