@@ -440,6 +440,14 @@ router.post('/clone', async (req, res) => {
       // Create worktree
       await execAsync(`git worktree add "${finalPath}" ${branch}`, { cwd: existingClone });
 
+      // Set proper permissions on worktree files (ensure writable for Claude Code)
+      try {
+        await execAsync(`chmod -R u+rw "${finalPath}"`);
+        console.log('[Coolify] Set permissions on worktree:', finalPath);
+      } catch (permError) {
+        console.warn('[Coolify] Could not set permissions on worktree:', permError.message);
+      }
+
       // Register as project
       await addProjectManually(finalPath);
 
@@ -476,6 +484,14 @@ router.post('/clone', async (req, res) => {
 
       cloneProcess.on('error', reject);
     });
+
+    // Set proper permissions on cloned files (ensure writable for Claude Code)
+    try {
+      await execAsync(`chmod -R u+rw "${finalPath}"`);
+      console.log('[Coolify] Set permissions on cloned repository:', finalPath);
+    } catch (permError) {
+      console.warn('[Coolify] Could not set permissions:', permError.message);
+    }
 
     // Register as project
     await addProjectManually(finalPath);
