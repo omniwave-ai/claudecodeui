@@ -27,11 +27,13 @@ function LoginModal({
 
     switch (provider) {
       case 'claude':
-        return 'claude setup-token --dangerously-skip-permissions';
+        // Use full OAuth login instead of setup-token for complete authentication
+        // This provides all scopes needed for both SDK (chat) and CLI (shell) modes
+        return 'claude login';
       case 'cursor':
         return 'cursor-agent login';
       default:
-        return 'claude setup-token --dangerously-skip-permissions';
+        return 'claude login';
     }
   };
 
